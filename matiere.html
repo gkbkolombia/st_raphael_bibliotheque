@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documents - Bibliothèque</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 0; }
+    header { background: #2c3e50; color: white; padding: 20px; text-align: center; }
+    h1 { margin: 0; }
+    .pdf-list { max-width: 1000px; margin: 20px auto; display: flex; flex-direction: column; gap: 20px; }
+    .pdf-item { padding: 15px; border: 1px solid #ccc; border-radius: 8px; background: white; }
+    .pdf-item h3 { margin: 0 0 10px 0; }
+    iframe { width: 100%; height: 500px; border: none; }
+    a.back { display: inline-block; margin: 20px; text-decoration: none; color: #2980b9; font-weight: bold; }
+    a.back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="titreMatiere">📘 Documents</h1>
+  </header>
+
+  <a href="index.html" class="back"><i class="fas fa-arrow-left"></i> Retour à l'accueil</a>
+
+  <div class="pdf-list" id="pdfContainer">
+    <p>Chargement des documents...</p>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const matiere = urlParams.get("matiere");
+
+    const container = document.getElementById("pdfContainer");
+    const titre = document.getElementById("titreMatiere");
+
+    if (!matiere) {
+      container.innerHTML = "<p style='color:red'>⚠️ Aucune matière sélectionnée.</p>";
+    } else {
+      fetch(`json/${matiere}.json`)
+        .then(response => {
+          if (!response.ok) throw new Error("JSON introuvable");
+          return response.json();
+        })
+        .then(data => {
+          titre.textContent = `📘 Documents de ${data.titre}`;
+          container.innerHTML = "";
+
+          if (!data.pdfs || data.pdfs.length === 0) {
+            container.innerHTML = "<p>Aucun document disponible.</p>";
+            return;
+          }
+
+          data.pdfs.forEach(pdf => {
+            const div = document.createElement("div");
+            div.className = "pdf-item";
+            div.innerHTML = `<h3>${pdf.split("/").pop()}</h3>
+                             <iframe src="${pdf}"></iframe>`;
+            container.appendChild(div);
+          });
+        })
+        .catch(error => {
+          container.innerHTML = "<p style='color:red'>⚠️ Impossible de charger les documents.</p>";
+          console.error(error);
+        });
+    }
+  </script>
+</body>
+</html>
