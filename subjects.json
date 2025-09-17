@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Mathématiques",
+    "path": "mathématiques/index.html"
+  },
+  {
+    "name": "Histoire - Géographie",
+    "path": "histoire géographie/index.html"
+  },
+  {
+    "name": "PCT",
+    "path": "pct/index.html"
+  }
+]
